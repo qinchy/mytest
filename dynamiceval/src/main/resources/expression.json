@@ -1,0 +1,28 @@
+[
+  {
+    "action": "modify",
+    "jsonpath": "$.comment",
+    "value": "this is a comment"
+  },
+  {
+    "action": "addKey",
+    "jsonpath": "$.header",
+    "key": "appId",
+    "value": "MyAppId"
+  },
+  {
+    "action": "addItem",
+    "jsonpath": "$.header.category",
+    "value": "MySelfCategory"
+  },
+  {
+    "action": "addJsonItem",
+    "jsonpath": "$.body.book",
+    "value": {
+      "author": "aaaa",
+      "price": 9.99,
+      "category": "reference",
+      "title": "demo"
+    }
+  }
+]

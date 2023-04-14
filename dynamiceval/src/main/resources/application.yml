@@ -1,0 +1,29 @@
+handler-expression: |
+  [
+    {
+      "action": "modify",
+      "jsonpath": "$.comment",
+      "value": "#{'this is a comment'}"
+    },
+    {
+      "action": "addKey",
+      "jsonpath": "$.header",
+      "key": "appId",
+      "value": "#{T(java.lang.Math).random()}"
+    },
+    {
+      "action": "addItem",
+      "jsonpath": "$.header.category",
+      "value": "#{'MySelfCategory'}"
+    },
+    {
+      "action": "addJsonItem",
+      "jsonpath": "$.body.book",
+      "value": {
+        "author": "Smith",
+        "price": 9.99,
+        "category": "reference",
+        "title": "demo"
+      }
+    }
+  ]
