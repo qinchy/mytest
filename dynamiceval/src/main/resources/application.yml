@@ -9,7 +9,7 @@ handler-expression: |
       "action": "addKey",
       "jsonpath": "$.header",
       "key": "appId",
-      "value": "#{T(java.lang.Math).random()}"
+      "value": "#{'T(Math).random()'}"
     },
     {
       "action": "addItem",
