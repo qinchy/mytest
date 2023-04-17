@@ -26,8 +26,17 @@ import java.util.Map;
 @Slf4j
 public class DynamicEvalController {
 
-    @Value("${handler-expression}")
+    /**
+     * $表示获取配置参数
+     */
+    @Value("${handler-expression:[{\"action\": \"modify\",\"jsonpath\": \"$.comment\",\"value\": \"#{'T(Math).random()'}\"}]}")
     private String handlerExpress;
+
+    /**
+     * #表示字面值
+     */
+    @Value("#{16}")
+    private Integer threadCount;
 
     @Autowired
     AliPayConfig aliPayConfig;
@@ -35,7 +44,8 @@ public class DynamicEvalController {
     @PostMapping("/echo")
     public Map echo(@RequestBody Map param) throws Exception {
         log.info(handlerExpress);
-        log.info(aliPayConfig.getAppId());
+        log.info("appId={}", aliPayConfig.getAppId());
+        log.info("threadCount={}", threadCount);
 
         DocumentContext documentContext = JsonPath.parse(param);
 
