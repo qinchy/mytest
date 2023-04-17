@@ -3,13 +3,13 @@ handler-expression: |
     {
       "action": "modify",
       "jsonpath": "$.comment",
-      "value": "#{'this is a comment'}"
+      "value": "#{'T(Math).random()'}"
     },
     {
       "action": "addKey",
       "jsonpath": "$.header",
       "key": "appId",
-      "value": "#{'T(Math).random()'}"
+      "value": "#{aliPayConfig.getAppId()}"
     },
     {
       "action": "addItem",
@@ -27,3 +27,7 @@ handler-expression: |
       }
     }
   ]
+
+alipay:
+  config:
+    appId: MyDefinedAppId

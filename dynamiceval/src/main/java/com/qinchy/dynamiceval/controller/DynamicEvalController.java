@@ -5,13 +5,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import com.qinchy.dynamiceval.config.AliPayConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParseException;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +29,13 @@ public class DynamicEvalController {
     @Value("${handler-expression}")
     private String handlerExpress;
 
+    @Autowired
+    AliPayConfig aliPayConfig;
+
     @PostMapping("/echo")
     public Map echo(@RequestBody Map param) throws Exception {
         log.info(handlerExpress);
+        log.info(aliPayConfig.getAppId());
 
         DocumentContext documentContext = JsonPath.parse(param);
 
@@ -35,6 +43,9 @@ public class DynamicEvalController {
         if (jsonArray.size() == 0) {
             throw new Exception("配置为空");
         }
+
+        EvaluationContext evaluationContext = new StandardEvaluationContext();
+        evaluationContext.setVariable("aliPayConfig", aliPayConfig);
 
         //创建ExpressionParser解析表达式
         ExpressionParser parser = new SpelExpressionParser();
