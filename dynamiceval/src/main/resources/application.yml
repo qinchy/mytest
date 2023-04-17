@@ -12,6 +12,12 @@ handler-expression: |
       "value": "#{aliPayConfig.getAppId()}"
     },
     {
+      "action": "addKey",
+      "jsonpath": "$.header",
+      "key": "modified",
+      "value": "new String('true')"
+    },
+    {
       "action": "addItem",
       "jsonpath": "$.header.category",
       "value": "#{'MySelfCategory'}"
