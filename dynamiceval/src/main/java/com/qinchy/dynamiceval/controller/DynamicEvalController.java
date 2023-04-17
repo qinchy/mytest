@@ -72,7 +72,7 @@ public class DynamicEvalController {
             } catch (ParseException e) {
                 log.error("解析SpEL表达式{}异常，值可能是字面文本值", valueOrExpress, e);
             } catch (SpelEvaluationException e){
-                log.error("解析SpEL表达式{}异常，值可能是字面文本值", valueOrExpress, e);
+                log.error("取值SpEL表达式{}异常，值可能是字面文本值", valueOrExpress, e);
             }
 
             // 给指定路径设置一个值(无此路径时不添加)
