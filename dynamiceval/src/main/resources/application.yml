@@ -9,7 +9,7 @@ handler-expression: |
       "action": "addKey",
       "jsonpath": "$.header",
       "key": "appId",
-      "value": "#{aliPayConfig.getAppId()}"
+      "value": "#{aliPayConfigService.getAlipayConfig()}"
     },
     {
       "action": "addKey",

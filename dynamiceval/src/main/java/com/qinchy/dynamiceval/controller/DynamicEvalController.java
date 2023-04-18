@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.qinchy.dynamiceval.config.AliPayConfig;
+import com.qinchy.dynamiceval.service.AliPayConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,12 +40,11 @@ public class DynamicEvalController {
     private Integer threadCount;
 
     @Autowired
-    AliPayConfig aliPayConfig;
+    private AliPayConfigService aliPayConfigService;
 
     @PostMapping("/echo")
     public Map echo(@RequestBody Map param) throws Exception {
         log.info(handlerExpress);
-        log.info("appId={}", aliPayConfig.getAppId());
         log.info("threadCount={}", threadCount);
 
         DocumentContext documentContext = JsonPath.parse(param);
@@ -55,7 +55,7 @@ public class DynamicEvalController {
         }
 
         EvaluationContext evaluationContext = new StandardEvaluationContext();
-        evaluationContext.setVariable("aliPayConfig", aliPayConfig);
+        evaluationContext.setVariable("aliPayConfigService", aliPayConfigService);
 
         //创建ExpressionParser解析表达式
         ExpressionParser parser = new SpelExpressionParser();
