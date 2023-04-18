@@ -1,5 +1,7 @@
+*.iml
 /.idea/
 /**/target
-/**/mvnw/
+/**/mvnw
 /**/.mvn
 /**/mvnw.cmd
+/dynamiceval/HELP.md
