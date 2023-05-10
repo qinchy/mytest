@@ -4,6 +4,8 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
+import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -12,7 +14,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.spec.EncodedKeySpec;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -160,6 +165,58 @@ public class CipherAsymmetricEncryptionDemo {
         return result;
     }
 
+    /**
+     * 使用私钥签名
+     *
+     * @param content          明文
+     * @param secureRandomSeed 安全随机数种子
+     * @return 签名结果
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     */
+    private static String signatureByPrivateKey(String content, String secureRandomSeed) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException {
+        KeyPair keyPair = generateRsaKeyPair(secureRandomSeed);
+        byte[] privateEncoded = keyPair.getPrivate().getEncoded();
+
+        EncodedKeySpec encodedKeySpec = new PKCS8EncodedKeySpec(privateEncoded);
+        //创建 KeyFactory 对象，用于转换指定算法(RSA)的公钥/私钥。
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        //从提供的密钥规范生成私钥对象
+        PrivateKey keyPrivate = keyFactory.generatePrivate(encodedKeySpec);
+
+        // 开始签名
+        // 1.1 获取签名实例
+        Signature signature = Signature.getInstance("sha256withrsa");
+        // 1.2 初始化签名实例
+        signature.initSign(keyPrivate);
+        // 1.3 传入原文
+        signature.update(content.getBytes());
+        // 1.4 开始签名
+        byte[] sign = signature.sign();
+        // 1.5 使用base64编码
+        return new BASE64Encoder().encode(sign);
+    }
+
+    private static boolean verifySignatureByPublicKey(String content, String signatureData, String secureRandomSeed) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException, IOException {
+        KeyPair keyPair = generateRsaKeyPair(secureRandomSeed);
+
+        EncodedKeySpec keySpec = new X509EncodedKeySpec(keyPair.getPublic().getEncoded());
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey publicKey = keyFactory.generatePublic(keySpec);
+
+        // 开始签名
+        // 1.1 获取签名实例
+        Signature signature = Signature.getInstance("sha256withrsa");
+        // 1.2 初始化验签实例
+        signature.initVerify(publicKey);
+        // 1.3 传入原文
+        signature.update(content.getBytes());
+        // 1.4 开始验签
+        return signature.verify(new BASE64Decoder().decodeBuffer(signatureData));
+    }
+
     public static void main(String[] args) {
         String content = "红网时刻5月17日讯（记者 汪衡 通讯员 颜雨彬 汪丹）“场面壮观，气势磅礴.";
         String secureRandomSeed = "TPCz0lDvTHybGMsHTJi3mJ7Pt48llJmRHb";
@@ -179,6 +236,17 @@ public class CipherAsymmetricEncryptionDemo {
             decrypted = cipherByPublicKey(encrypted, 2, secureRandomSeed);
             System.out.println("私钥加密后：\n" + encrypted);
             System.out.println("公钥解密后：\n" + decrypted);
+
+            System.out.println("\n===============我是分割线===============\n");
+
+            String signatureString = signatureByPrivateKey(content, secureRandomSeed);
+            System.out.println("私钥签名后：\n" + signatureString);
+
+            System.out.println("\n===============我是分割线===============\n");
+
+            boolean flag = verifySignatureByPublicKey(content, signatureString, secureRandomSeed);
+            System.out.println("公钥验签结果：\n" + flag);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
