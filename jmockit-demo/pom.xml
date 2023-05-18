@@ -15,7 +15,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-version>5.2.21.RELEASE</spring-version>
+        <dubbo-version>2.7.0-SNAPSHOT</dubbo-version>
+        <rocketmq-version>3.2.6</rocketmq-version>
+        <javax-persistence-version>1.0</javax-persistence-version>
     </properties>
 
     <dependencies>
@@ -47,23 +49,45 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>${spring-version}</version>
+        </dependency>
+
+        <!-- dubbo 依赖 -->
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-config-spring</artifactId>
+            <version>${dubbo-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-registry-zookeeper</artifactId>
+            <version>${dubbo-version}</version>
+        </dependency>
+
+        <!-- rocketmq 依赖 -->
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>${rocketmq-version}</version>
+        </dependency>
+
+        <!-- 持久化 -->
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>${javax-persistence-version}</version>
         </dependency>
     </dependencies>
 </project>
