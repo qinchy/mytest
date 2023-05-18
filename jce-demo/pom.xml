@@ -7,6 +7,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>jce-demo</artifactId>
-    <name>Archetype - jce-demo</name>
+    <name>jce-demo</name>
     <url>http://maven.apache.org</url>
 </project>
