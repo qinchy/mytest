@@ -71,10 +71,8 @@ public class DynamicEvalController {
             Object value = valueOrExpress;
             try {
                 exp = parser.parseExpression(valueOrExpress);
-                value = exp.getValue();
-                if (null == value) {
-                    value = exp.getValue(evaluationContext, String.class);
-                }
+                Class<?> valueType = exp.getValueType(evaluationContext);
+                value = exp.getValue(evaluationContext, valueType);
             } catch (ParseException e) {
                 log.error("解析SpEL表达式{}异常，值可能是字面文本值", valueOrExpress, e);
             } catch (SpelEvaluationException e) {
