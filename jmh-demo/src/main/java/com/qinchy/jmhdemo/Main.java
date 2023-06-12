@@ -30,7 +30,10 @@ public class Main {
     String json = "{\"color\":\"Black\",\"type\":\"BMW\"}";
 
     public static void main(String[] args) throws Exception {
-        Options opts = new OptionsBuilder().include(Main.class.getSimpleName()).resultFormat(ResultFormatType.CSV).build();
+        Options opts = new OptionsBuilder()
+                .include(Main.class.getSimpleName())
+                .resultFormat(ResultFormatType.CSV)
+                .build();
 
         new Runner(opts).run();
     }
