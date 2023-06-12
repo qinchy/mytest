@@ -12,6 +12,7 @@
         <module>dynamiceval</module>
         <module>jce-demo</module>
         <module>jmockit-demo</module>
+        <module>jmh-demo</module>
     </modules>
 
     <properties>
