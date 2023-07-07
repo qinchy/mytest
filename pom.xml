@@ -13,6 +13,7 @@
         <module>jce-demo</module>
         <module>jmockit-demo</module>
         <module>jmh-demo</module>
+        <module>combin-yml</module>
     </modules>
 
     <properties>

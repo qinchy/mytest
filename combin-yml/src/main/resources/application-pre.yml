@@ -1,0 +1,14 @@
+spring:
+  profiles: pre
+  cloud:
+    gateway:
+      routes:
+        - id: id3
+          uri: http://127.0.0.1:8724/admin/categ/test3
+          predicates:
+            - Path=/admin/categ/test3
+
+operator:
+  names:
+    - xxx
+    - dddfsd

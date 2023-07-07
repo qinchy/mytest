@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: dev,prd
+
+aa: bb
+
+operator:
+  names:
+    - zzz
+    - ddd

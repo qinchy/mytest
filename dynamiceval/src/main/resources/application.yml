@@ -37,3 +37,8 @@ handler-expression: |
 alipay:
   config:
     appId: MyDefinedAppId
+
+management:
+  endpoints:
+    web:
+      base-path: /
