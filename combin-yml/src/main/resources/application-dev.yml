@@ -1,5 +1,4 @@
-mm:
-  mm
+mm: mm
 
 spring:
   profiles:

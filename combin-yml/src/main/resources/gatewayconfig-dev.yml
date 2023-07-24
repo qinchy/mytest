@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: id1
+          uri: http://127.0.0.1:8724/admin/categ/test1
+          predicates:
+            - Path=/admin/categ/test1
+        - id: id2
+          uri: http://127.0.0.1:8724/admin/categ/test2
+          predicates:
+            - Path=/admin/categ/test2

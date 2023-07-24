@@ -1,5 +1,6 @@
 package com.qinchy.combinyml.controller;
 
+import com.qinchy.combinyml.config.GatewayConfig;
 import com.qinchy.combinyml.config.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,11 +22,15 @@ public class DemoController {
     private String nn;
 
     @Autowired
+    private GatewayConfig gatewayConfig;
+
+    @Autowired
     private Operator operator;
 
     @GetMapping("/getNames")
     public String getNames() {
         System.out.println(operator.getNames());
+        System.out.println(gatewayConfig);
         return aa + "~" + mm + "~" + nn;
     }
 }

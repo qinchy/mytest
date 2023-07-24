@@ -4,6 +4,9 @@ spring:
 
 aa: bb
 
+gatewayconfig: gatewayconfig-dev.yml,
+               gatewayconfig-prd.yml
+
 operator:
   names:
     - zzz
