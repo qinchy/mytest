@@ -10,3 +10,9 @@ spring:
           uri: http://127.0.0.1:8724/admin/categ/test2
           predicates:
             - Path=/admin/categ/test2
+
+config:
+  operator:
+    - name: cmcc
+      host: 127.0.0.1:8080
+      clientid: cmccclientid

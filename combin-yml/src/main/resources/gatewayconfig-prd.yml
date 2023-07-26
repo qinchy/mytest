@@ -6,3 +6,11 @@ spring:
           uri: http://127.0.0.1:8724/admin/categ/test3
           predicates:
             - Path=/admin/categ/test3
+config:
+  operator:
+    - name: ctcc
+      host: 127.0.0.1:8080
+      clientid: ctccclientid
+    - name: cucc
+      host: 127.0.0.1:8080
+      clientid: cuccclientid

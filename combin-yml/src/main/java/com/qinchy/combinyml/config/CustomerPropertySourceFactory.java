@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public class CustomerPropertySourceFactory implements PropertySourceFactory {
 
     // 获取当前配置文件同类属性数组下标（0 baseed序号）
-    private static final Pattern[] NEED_COMBIN_PATTERN = {Pattern.compile("(spring.cloud.gateway.routes\\[)(\\d)(].*)")};
+    private static final Pattern[] NEED_COMBIN_PATTERN = {Pattern.compile("(spring.cloud.gateway.routes\\[)(\\d)(].*)"), Pattern.compile("(config.operator\\[)(\\d)(].*)")};
 
     @Override
     public PropertySource<?> createPropertySource(String s, EncodedResource encodedResource) throws IOException {
@@ -39,7 +39,12 @@ public class CustomerPropertySourceFactory implements PropertySourceFactory {
         ResourceLoader resourceLoader = new DefaultResourceLoader();
         YamlPropertiesFactoryBean factoryBean = new YamlPropertiesFactoryBean();
 
+        // offsets[0]：表示所有配置文件中“spring.cloud.gateway.routes”中元素的个数
+        // offsets[1]：表示所有配置文件中“config.operator”中元素的个数
         int[] offsets = new int[NEED_COMBIN_PATTERN.length];
+
+        // localIdxs[0]：表示当前配置文件中“spring.cloud.gateway.routes”中元素的个数
+        // localIdxs[1]：表示当前配置文件中“config.operator”中元素的个数
         int[] localIdxs = new int[NEED_COMBIN_PATTERN.length];
 
         // 循环加载属性配置文件
@@ -59,16 +64,21 @@ public class CustomerPropertySourceFactory implements PropertySourceFactory {
                 localIdxs[i] = -1;
             }
 
+            // 遍列当前文件中的所有配置项
             for (Map.Entry<Object, Object> entry : props.entrySet()) {
                 String propKey = entry.getKey().toString();
                 int i = 0;
                 for (; i < NEED_COMBIN_PATTERN.length; i++) {
                     Matcher matcher = NEED_COMBIN_PATTERN[i].matcher(propKey);
                     if (matcher.find()) {
+                        // 当前yml配置文件中第i个匹配项的编号
                         localIdxs[i] = Integer.parseInt(matcher.group(2));
+                        // 加上前面yml配置文件的编号
                         int idx = offsets[i] + localIdxs[i];
                         String fullPropKey = matcher.group(1) + idx + matcher.group(3);
                         fullProperties.put(fullPropKey, entry.getValue());
+
+                        // 匹配上了则跳出循环
                         break;
                     }
                 }
@@ -79,6 +89,7 @@ public class CustomerPropertySourceFactory implements PropertySourceFactory {
                 }
             }
 
+            // 当前配置文件配置项遍列完成后，将次数累计到对应配置项的总次数中
             for (int i = 0; i < NEED_COMBIN_PATTERN.length; i++) {
                 offsets[i] += localIdxs[i] + 1;
             }
