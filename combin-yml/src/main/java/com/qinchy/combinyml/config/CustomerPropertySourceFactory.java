@@ -26,7 +26,10 @@ import java.util.regex.Pattern;
 public class CustomerPropertySourceFactory implements PropertySourceFactory {
 
     // 获取当前配置文件同类属性数组下标（0 baseed序号）
-    private static final Pattern[] NEED_COMBIN_PATTERN = {Pattern.compile("(spring.cloud.gateway.routes\\[)(\\d)(].*)"), Pattern.compile("(config.operator\\[)(\\d)(].*)")};
+    private static final Pattern[] NEED_COMBIN_PATTERN = {
+            Pattern.compile("(spring.cloud.gateway.routes\\[)(\\d)(].*)"),
+            Pattern.compile("(config.operator\\[)(\\d)(].*)")
+    };
 
     @Override
     public PropertySource<?> createPropertySource(String s, EncodedResource encodedResource) throws IOException {
@@ -83,6 +86,7 @@ public class CustomerPropertySourceFactory implements PropertySourceFactory {
                     }
                 }
 
+                // 遍列完当前文件的所有配置项都没有匹配的，则给个警告，并把key和value都放到fullProperties
                 if (i == NEED_COMBIN_PATTERN.length) {
                     log.warn("用于配置spring.cloud.gateway参数的yml文件{}里不应该出现其他类型的配置参数：{}", location, propKey);
                     fullProperties.put(propKey, entry.getValue());
