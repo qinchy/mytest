@@ -2,15 +2,13 @@ package com.qinchy.combinyml.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
-import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.EncodedResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertySourceFactory;
 
 import java.io.IOException;
@@ -25,21 +23,26 @@ import java.util.regex.Pattern;
 @Slf4j
 public class CustomerPropertySourceFactory implements PropertySourceFactory {
 
+    private static final String PROPERTY_SOURCE_NAME = "cloud";
+
     // 获取当前配置文件同类属性数组下标（0 baseed序号）
-    private static final Pattern[] NEED_COMBIN_PATTERN = {
-            Pattern.compile("(spring.cloud.gateway.routes\\[)(\\d)(].*)"),
-            Pattern.compile("(config.operator\\[)(\\d)(].*)")
-    };
+    private static final Pattern[] NEED_COMBIN_PATTERN = {Pattern.compile("(spring.cloud.gateway.routes\\[)(\\d)(].*)"), Pattern.compile("(config.operator\\[)(\\d)(].*)")};
 
     @Override
     public PropertySource<?> createPropertySource(String s, EncodedResource encodedResource) throws IOException {
         Properties fullProperties = new Properties();
         ClassPathResource ymlFilesResource = (ClassPathResource) encodedResource.getResource();
-        String filename = ymlFilesResource.getFilename();
-        String[] ymlFilePaths = ymlFilesResource.getPath().split(",");
 
-        AbstractEnvironment environment = new StandardEnvironment();
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        String ymlFilePath = ymlFilesResource.getPath();
+
+        Resource[] resources;
+        try {
+            resources = new PathMatchingResourcePatternResolver().getResources(ResourceLoader.CLASSPATH_URL_PREFIX + ymlFilePath);
+        } catch (IOException e) {
+            log.error("get yml resources from {} failed", ymlFilePath, e);
+            return null;
+        }
+
         YamlPropertiesFactoryBean factoryBean = new YamlPropertiesFactoryBean();
 
         // offsets[0]：表示所有配置文件中“spring.cloud.gateway.routes”中元素的个数
@@ -51,15 +54,10 @@ public class CustomerPropertySourceFactory implements PropertySourceFactory {
         int[] localIdxs = new int[NEED_COMBIN_PATTERN.length];
 
         // 循环加载属性配置文件
-        for (String ymlFilePath : ymlFilePaths) {
-            String location = ymlFilePath.trim();
-            if (location.isEmpty()) {
-                // 忽略空文件名
-                continue;
-            }
+        for (Resource resource : resources) {
+            String resourceFilename = resource.getFilename();
+            log.info("load properties from {} ", resourceFilename);
 
-            String resolvedLocation = environment.resolveRequiredPlaceholders(location);
-            Resource resource = resourceLoader.getResource(resolvedLocation);
             factoryBean.setResources(resource);
             Properties props = factoryBean.getObject();
 
@@ -88,7 +86,7 @@ public class CustomerPropertySourceFactory implements PropertySourceFactory {
 
                 // 遍列完当前文件的所有配置项都没有匹配的，则给个警告，并把key和value都放到fullProperties
                 if (i == NEED_COMBIN_PATTERN.length) {
-                    log.warn("用于配置spring.cloud.gateway参数的yml文件{}里不应该出现其他类型的配置参数：{}", location, propKey);
+                    log.warn("用于配置spring.cloud.gateway参数的yml文件{}里不应该出现其他类型的配置参数：{}", resourceFilename, propKey);
                     fullProperties.put(propKey, entry.getValue());
                 }
             }
@@ -99,6 +97,6 @@ public class CustomerPropertySourceFactory implements PropertySourceFactory {
             }
         }
 
-        return new PropertiesPropertySource(filename, fullProperties);
+        return new PropertiesPropertySource(PROPERTY_SOURCE_NAME, fullProperties);
     }
 }

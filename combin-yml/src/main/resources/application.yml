@@ -4,8 +4,12 @@ spring:
 
 aa: bb
 
-gatewayconfig: gatewayconfig-dev.yml,
-               gatewayconfig-prd.yml
+# 支持通配
+gatewayconfig: gatewayconfig-*.yml
+
+# 指定文件名则这样配置
+#gatewayconfig: gatewayconfig-dev.yml,
+#               gatewayconfig-prd.yml
 
 operator:
   names:
