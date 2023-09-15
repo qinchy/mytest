@@ -1,4 +1,4 @@
-package com.qinchy.jmhdemo;
+package com.qinchy.jmh;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -11,10 +11,6 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.annotations.Warmup;
-import org.openjdk.jmh.results.format.ResultFormatType;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -26,24 +22,29 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 @Threads(8)
-public class Main {
+public class MapperBenchmark {
     String json = "{\"color\":\"Black\",\"type\":\"BMW\"}";
 
-    public static void main(String[] args) throws Exception {
-        Options opts = new OptionsBuilder()
-                .include(Main.class.getSimpleName())
-                .resultFormat(ResultFormatType.CSV)
-                .build();
-
-        new Runner(opts).run();
-    }
-
+    /**
+     * 每次基准测试都用全局的ObjectMapper将字符串反序列化成map
+     *
+     * @param state
+     * @return
+     * @throws Exception
+     */
     @Benchmark
     public Map globalTest(BenchmarkState state) throws Exception {
         Map map = state.GLOBAL_MAP.readValue(json, Map.class);
         return map;
     }
 
+    /**
+     * 每个线程都用已经缓存的ObjectMapper将字符串反序列化成map
+     *
+     * @param state
+     * @return
+     * @throws Exception
+     */
     @Benchmark
     public Map globalTestThreadLocal(BenchmarkState state) throws Exception {
         if (null == state.GLOBAL_MAP_THREAD.get()) {
@@ -53,6 +54,12 @@ public class Main {
         return map;
     }
 
+    /**
+     * 每次基准测试都用本地的ObjectMapper将字符串反序列化成map
+     *
+     * @return
+     * @throws Exception
+     */
     @Benchmark
     public Map localTest() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
