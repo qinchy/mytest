@@ -8,6 +8,7 @@ import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Warmup;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,11 +32,14 @@ public class RandomBenchmark {
 
     private static final int CARD_COUNT = 54;
 
-    private static final List<Integer> CARD_LIST = new ArrayList<Integer>();
+    private static final List<Integer> CARD_LIST;
 
     private static final Random GLOBAL_RANDOM = new Random();
 
+    private static final Random GLOBAL_SECURE_RANDOM = new SecureRandom();
+
     static {
+        CARD_LIST = new ArrayList<Integer>();
         for (int i = 0; i < CARD_COUNT; i++) {
             CARD_LIST.add(i);
         }
@@ -66,7 +70,9 @@ public class RandomBenchmark {
     public List<Integer> testOuterRandom2() {
         // 洗牌算法
         Random random = new Random();
-        Collections.shuffle(CARD_LIST, random);
+        for (int i = 0; i < CARD_COUNT; i++) {
+            Collections.shuffle(CARD_LIST, random);
+        }
         return CARD_LIST;
     }
 
@@ -128,6 +134,32 @@ public class RandomBenchmark {
         for (int i = 0; i < CARD_COUNT; i++) {
             Collections.shuffle(CARD_LIST, GLOBAL_RANDOM);
         }
+        return CARD_LIST;
+    }
+
+    /**
+     * 使用全局的常规random
+     *
+     * @return
+     */
+    @Benchmark
+    public List<Integer> testNormalRandom() {
+        // 洗牌算法
+        Collections.shuffle(CARD_LIST, GLOBAL_RANDOM);
+
+        return CARD_LIST;
+    }
+
+    /**
+     * 使用全局的SecureRandom
+     *
+     * @return
+     */
+    @Benchmark
+    public List<Integer> testSecureRandom() {
+        // 洗牌算法
+        Collections.shuffle(CARD_LIST, GLOBAL_SECURE_RANDOM);
+
         return CARD_LIST;
     }
 }
