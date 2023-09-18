@@ -29,20 +29,105 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class RandomBenchmark {
 
-    @Benchmark
-    public List<Integer> testMethod() {
-        int cardCount = 54;
-        List<Integer> cardList = new ArrayList<Integer>();
-        for (int i = 0; i < cardCount; i++) {
-            cardList.add(i);
+    private static final int CARD_COUNT = 54;
+
+    private static final List<Integer> CARD_LIST = new ArrayList<Integer>();
+
+    private static final Random GLOBAL_RANDOM = new Random();
+
+    static {
+        for (int i = 0; i < CARD_COUNT; i++) {
+            CARD_LIST.add(i);
         }
-        // 洗牌算法
-        Random random = new Random();
-        for (int i = 0; i < cardCount; i++) {
-            int rand = random.nextInt(cardCount);
-            Collections.swap(cardList, i, rand);
-        }
-        return cardList;
     }
 
+    /**
+     * 所有循环使用一个random
+     *
+     * @return
+     */
+    @Benchmark
+    public List<Integer> testOuterRandom1() {
+        // 洗牌算法
+        Random random = new Random();
+        for (int i = 0; i < CARD_COUNT; i++) {
+            int rand = random.nextInt(CARD_COUNT);
+            Collections.swap(CARD_LIST, i, rand);
+        }
+        return CARD_LIST;
+    }
+
+    /**
+     * 所有循环使用一个random
+     *
+     * @return
+     */
+    @Benchmark
+    public List<Integer> testOuterRandom2() {
+        // 洗牌算法
+        Random random = new Random();
+        Collections.shuffle(CARD_LIST, random);
+        return CARD_LIST;
+    }
+
+
+    /**
+     * 每个循环使用新的random
+     *
+     * @return
+     */
+    @Benchmark
+    public List<Integer> testInnerRandom1() {
+        // 洗牌算法
+        for (int i = 0; i < CARD_COUNT; i++) {
+            Random random = new Random();
+            int rand = random.nextInt(CARD_COUNT);
+            Collections.swap(CARD_LIST, i, rand);
+        }
+        return CARD_LIST;
+    }
+
+    /**
+     * 每个循环使用新的random
+     *
+     * @return
+     */
+    @Benchmark
+    public List<Integer> testInnerRandom2() {
+        // 洗牌算法
+        for (int i = 0; i < CARD_COUNT; i++) {
+            Random random = new Random();
+            Collections.shuffle(CARD_LIST, random);
+        }
+        return CARD_LIST;
+    }
+
+    /**
+     * 所有线程使用全局random
+     *
+     * @return
+     */
+    @Benchmark
+    public List<Integer> testGlobalRandom1() {
+        // 洗牌算法
+        for (int i = 0; i < CARD_COUNT; i++) {
+            int rand = GLOBAL_RANDOM.nextInt(CARD_COUNT);
+            Collections.swap(CARD_LIST, i, rand);
+        }
+        return CARD_LIST;
+    }
+
+    /**
+     * 所有线程使用全局random
+     *
+     * @return
+     */
+    @Benchmark
+    public List<Integer> testGlobalRandom2() {
+        // 洗牌算法
+        for (int i = 0; i < CARD_COUNT; i++) {
+            Collections.shuffle(CARD_LIST, GLOBAL_RANDOM);
+        }
+        return CARD_LIST;
+    }
 }
