@@ -51,7 +51,7 @@ public class RandomBenchmark {
      * @return
      */
     @Benchmark
-    public List<Integer> testOuterRandom1() {
+    public List<Integer> testWithOuterRandomAndSwap() {
         // 洗牌算法
         Random random = new Random();
         for (int i = 0; i < CARD_COUNT; i++) {
@@ -62,21 +62,6 @@ public class RandomBenchmark {
         return CARD_LIST;
     }
 
-    /**
-     * 所有循环使用一个random
-     *
-     * @return
-     */
-    @Benchmark
-    public List<Integer> testOuterRandom2() {
-        // 洗牌算法
-        Random random = new Random();
-        for (int i = 0; i < CARD_COUNT; i++) {
-            Collections.shuffle(CARD_LIST, random);
-        }
-        return CARD_LIST;
-    }
-
 
     /**
      * 每个循环使用新的random
@@ -84,7 +69,7 @@ public class RandomBenchmark {
      * @return
      */
     @Benchmark
-    public List<Integer> testInnerRandom1() {
+    public List<Integer> testWithInnerRandomAndSwap() {
         // 洗牌算法
         for (int i = 0; i < CARD_COUNT; i++) {
             Random random = new Random();
@@ -95,17 +80,16 @@ public class RandomBenchmark {
     }
 
     /**
-     * 每个循环使用新的random
+     * 每个测试时都是新的random
      *
      * @return
      */
     @Benchmark
-    public List<Integer> testInnerRandom2() {
+    public List<Integer> testWithInnerRandomAndShuffle() {
         // 洗牌算法
-        for (int i = 0; i < CARD_COUNT; i++) {
-            Random random = new Random();
-            Collections.shuffle(CARD_LIST, random);
-        }
+        Random random = new Random();
+        Collections.shuffle(CARD_LIST, random);
+
         return CARD_LIST;
     }
 
@@ -115,7 +99,7 @@ public class RandomBenchmark {
      * @return
      */
     @Benchmark
-    public List<Integer> testGlobalRandom1() {
+    public List<Integer> testWithGlobalRandomAndSwap() {
         // 洗牌算法
         for (int i = 0; i < CARD_COUNT; i++) {
             int rand = GLOBAL_RANDOM.nextInt(CARD_COUNT);
@@ -130,21 +114,7 @@ public class RandomBenchmark {
      * @return
      */
     @Benchmark
-    public List<Integer> testGlobalRandom2() {
-        // 洗牌算法
-        for (int i = 0; i < CARD_COUNT; i++) {
-            Collections.shuffle(CARD_LIST, GLOBAL_RANDOM);
-        }
-        return CARD_LIST;
-    }
-
-    /**
-     * 使用全局的常规random
-     *
-     * @return
-     */
-    @Benchmark
-    public List<Integer> testNormalRandom() {
+    public List<Integer> testWithGlobalRandomAndShuffle() {
         // 洗牌算法
         Collections.shuffle(CARD_LIST, GLOBAL_RANDOM);
 
@@ -152,15 +122,16 @@ public class RandomBenchmark {
     }
 
     /**
-     * 使用全局的SecureRandom
+     * 所有线程使用全局SecureRandom
      *
      * @return
      */
     @Benchmark
-    public List<Integer> testSecureRandom() {
+    public List<Integer> testWithGlobalSecureRandomAndShuffle() {
         // 洗牌算法
         Collections.shuffle(CARD_LIST, GLOBAL_SECURE_RANDOM);
 
         return CARD_LIST;
     }
+
 }
