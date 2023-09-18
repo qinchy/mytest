@@ -56,6 +56,7 @@ public class RandomBenchmark {
         Random random = new Random();
         for (int i = 0; i < CARD_COUNT; i++) {
             int rand = random.nextInt(CARD_COUNT);
+            // 交换第i位和第rand位的数值
             Collections.swap(CARD_LIST, i, rand);
         }
         return CARD_LIST;
