@@ -14,6 +14,7 @@
         <module>jmockit-demo</module>
         <module>jmh-demo</module>
         <module>combin-yml</module>
+        <module>deadlock-demo</module>
     </modules>
 
     <properties>
